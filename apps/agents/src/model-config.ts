@@ -1,5 +1,6 @@
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
+
 type LocalModelConfig =
   | {
       temperatureRange?: { current?: number };
@@ -30,12 +31,56 @@ export const getModelConfig = (
     return {
       modelName: customModelName.replace("ollama-", ""),
       modelProvider: "ollama",
-      baseUrl: process.env.OLLAMA_BASE_URL || "http://ollama:11434/v1",
+      baseUrl:
+        process.env.OLLAMA_API_URL
+          ? `${process.env.OLLAMA_API_URL}/v1`
+          : "http://localhost:11434/v1",
     };
   }
 
-  throw new Error("Invalid model name prefix. Use 'litellm-' or 'ollama-'");
+  // For cloud providers (openai, anthropic, etc.), extract provider from model name
+  const provider = getProviderFromModelName(customModelName);
+  const apiKey = getApiKeyForProvider(provider);
+  if (!apiKey) {
+    throw new Error(
+      `API key required for provider: ${provider}. Set the appropriate environment variable.`
+    );
+  }
+
+  return {
+    modelName: customModelName,
+    modelProvider: provider,
+  };
 };
+
+function getProviderFromModelName(modelName: string): string {
+  if (modelName.startsWith("gpt-") || modelName.startsWith("o1") || modelName.startsWith("o3") || modelName.startsWith("o4")) return "openai";
+  if (modelName.startsWith("claude-")) return "anthropic";
+  if (modelName.includes("fireworks/")) return "fireworks";
+  if (modelName.startsWith("gemini-")) return "google-genai";
+  if (modelName.startsWith("azure/")) return "azure_openai";
+  if (modelName.startsWith("groq/")) return "groq";
+  return "openai";
+}
+
+function getApiKeyForProvider(provider: string): string | undefined {
+  switch (provider) {
+    case "openai":
+      return process.env.OPENAI_API_KEY;
+    case "anthropic":
+      return process.env.ANTHROPIC_API_KEY;
+    case "fireworks":
+      return process.env.FIREWORKS_API_KEY;
+    case "google-genai":
+      return process.env.GOOGLE_API_KEY;
+    case "azure_openai":
+      return process.env._AZURE_OPENAI_API_KEY;
+    case "groq":
+      return process.env.GROQ_API_KEY;
+    default:
+      return undefined;
+  }
+}
 
 export async function getModelFromConfig(
   config: LangGraphRunnableConfig,
@@ -45,12 +90,25 @@ export async function getModelFromConfig(
     isToolCalling?: boolean;
   }
 ): Promise<ChatOpenAI> {
-  const { modelName } = getModelConfig(config);
+  const { modelName, modelProvider, baseUrl } = getModelConfig(config);
   const { temperature = 0.5, maxTokens } = {
     temperature: config.configurable?.modelConfig?.temperatureRange.current,
     maxTokens: config.configurable?.modelConfig?.maxTokens.current,
     ...extra,
   };
+
+  if (modelProvider === "ollama") {
+    return new ChatOpenAI({
+      modelName,
+      temperature,
+      maxTokens,
+      streaming: true,
+      configuration: {
+        baseURL: baseUrl,
+        apiKey: "ollama",
+      },
+    });
+  }
 
   return new ChatOpenAI({
     modelName,

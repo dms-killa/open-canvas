@@ -22,7 +22,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setReflections(data.reflections || []);
       setCustomQuickActions(data.customQuickActions || []);
     } else {
-      const dummyUser = { id: "local-user", email: "local@local.com" };
+      const dummyUser = { id: "00000000-0000-0000-0000-000000000001", email: "local@local.com", username: "local-user" };
       setUser(dummyUser);
       localStorage.setItem("oc_user_data", JSON.stringify({ user: dummyUser, reflections: [], customQuickActions: [] }));
     }

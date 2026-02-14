@@ -249,6 +249,26 @@ export default function ModelSelector({
       <PopoverContent className="min-w-[180px] w-[280px] p-0 shadow-md rounded-md">
         <Command>
           <CommandList>
+            {ollamaModelGroup.length > 0 && (
+              <CommandGroup heading="Ollama (Local)" className="w-full">
+                {ollamaModelGroup.map((model) => {
+                  const config = modelConfigs[model.name];
+                  return (
+                    <CommandModelItem
+                      key={model.name}
+                      model={model}
+                      handleModelChange={handleModelChange}
+                      config={config}
+                      selectedModelName={modelName}
+                      openConfigModelId={openConfigModelId}
+                      setOpenConfigModelId={setOpenConfigModelId}
+                      setModelConfig={setModelConfig}
+                    />
+                  );
+                })}
+              </CommandGroup>
+            )}
+
             {openaiModelGroup.length > 0 && (
               <CommandGroup heading="OpenAI" className="w-full">
                 {openaiModelGroup.map((model) => {
@@ -352,26 +372,6 @@ export default function ModelSelector({
             {fireworksModelGroup.length > 0 && (
               <CommandGroup heading="Fireworks" className="w-full">
                 {fireworksModelGroup.map((model) => {
-                  const config = modelConfigs[model.name];
-                  return (
-                    <CommandModelItem
-                      key={model.name}
-                      model={model}
-                      handleModelChange={handleModelChange}
-                      config={config}
-                      selectedModelName={modelName}
-                      openConfigModelId={openConfigModelId}
-                      setOpenConfigModelId={setOpenConfigModelId}
-                      setModelConfig={setModelConfig}
-                    />
-                  );
-                })}
-              </CommandGroup>
-            )}
-
-            {ollamaModelGroup.length > 0 && (
-              <CommandGroup heading="Ollama" className="w-full">
-                {ollamaModelGroup.map((model) => {
                   const config = modelConfigs[model.name];
                   return (
                     <CommandModelItem

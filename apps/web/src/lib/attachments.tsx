@@ -4,8 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { ContextDocument } from "@opencanvas/shared/types";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { toBlobURL } from "@ffmpeg/util";
-import { createClient } from "@supabase/supabase-js";
-
 export function arrayToFileList(files: File[] | undefined) {
   if (!files || !files.length) return undefined;
   const dt = new DataTransfer();
@@ -56,36 +54,26 @@ export function contextDocumentToFile(document: ContextDocument): File {
 }
 
 export async function transcribeAudio(file: File, userId: string) {
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL_DOCUMENTS ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_DOCUMENTS
-  ) {
-    throw new Error(
-      "Supabase credentials for uploading context documents are missing"
-    );
-  }
-  const client = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL_DOCUMENTS,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_DOCUMENTS
-  );
+  // Upload file to local document storage API
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("userId", userId);
 
-  const res = await client.storage
-    .from("documents")
-    .upload(
-      `${userId}/${new Date().getTime()}-${file.name.replaceAll("/", "-").replaceAll(" ", "-")}`,
-      file,
-      {
-        upsert: true,
-      }
-    );
-  if (res.error) {
-    throw new Error(`Failed to upload context document: ${res.error.message}`);
+  const uploadRes = await fetch("/api/documents/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!uploadRes.ok) {
+    throw new Error("Failed to upload context document");
   }
+
+  const uploadData = await uploadRes.json();
 
   const result = await fetch("/api/whisper/audio", {
     method: "POST",
     body: JSON.stringify({
-      path: res.data.path,
+      path: uploadData.id,
     }),
   });
   if (!result.ok) {

@@ -15,7 +15,11 @@
     "format:check": "turbo format:check",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:studio": "npx prisma studio",
+    "setup": "docker-compose up -d postgres ollama && yarn install && yarn build"
   },
   "packageManager": "yarn@4.9.2",
   "devDependencies": {

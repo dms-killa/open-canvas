@@ -206,13 +206,14 @@ const OPENAI_MODELS: ModelConfigurationParams[] = [
   },
 ];
 
-/**
- * Ollama model names _MUST_ be prefixed with `"ollama-"`
- */
-const OLLAMA_MODELS = [
+// ============================================
+// PRIMARY PROVIDER: Ollama (Local, No API Key)
+// ============================================
+// Ollama model names _MUST_ be prefixed with `"ollama-"`
+const OLLAMA_MODELS: ModelConfigurationParams[] = [
   {
     name: "ollama-llama3.3",
-    label: "Llama 3.3 70B (local)",
+    label: "Llama 3.3 (Local)",
     config: {
       provider: "ollama",
       temperatureRange: {
@@ -230,11 +231,11 @@ const OLLAMA_MODELS = [
     },
     isNew: false,
   },
-    {
+  {
     name: "ollama-big-tiger-27b-48k:latest",
-    label: "Big‑Tiger‑27B‑48k (latest)",
+    label: "Big Tiger 27B (Local)",
     config: {
-      provider: "ollama",           // Ollama provider
+      provider: "ollama",
       temperatureRange: {
         min: 0,
         max: 1,
@@ -252,7 +253,7 @@ const OLLAMA_MODELS = [
   },
   {
     name: "ollama-gpt-oss-32k:latest",
-    label: "GPT OSS 32K (latest)",
+    label: "GPT OSS 32K (Local)",
     config: {
       provider: "ollama",
       temperatureRange: {
@@ -268,7 +269,7 @@ const OLLAMA_MODELS = [
         current: 32_000,
       },
     },
-  isNew: true,
+    isNew: true,
   },
 ];
 
@@ -646,12 +647,12 @@ export const THINKING_MODELS = [
 ];
 
 export const ALL_MODELS: ModelConfigurationParams[] = [
+  ...OLLAMA_MODELS,
   ...OPENAI_MODELS,
   ...ANTHROPIC_MODELS,
   ...FIREWORKS_MODELS,
   ...GEMINI_MODELS,
   ...AZURE_MODELS,
-  ...OLLAMA_MODELS,
   ...GROQ_MODELS,
 ];
 
@@ -671,16 +672,9 @@ export type ALL_MODEL_NAMES =
   | OLLAMA_MODEL_NAMES
   | GROQ_MODEL_NAMES;
 
-// 1. Keep the default model name as the Ollama model
-export const DEFAULT_MODEL_NAME: ALL_MODEL_NAMES = OLLAMA_MODELS[2].name;
+export const DEFAULT_MODEL_NAME: ALL_MODEL_NAMES = OLLAMA_MODELS[0].name;
 
-// 2. Build a default config that matches that Ollama model
 export const DEFAULT_MODEL_CONFIG: CustomModelConfig = {
-  // Take the Ollama entry that you want as default
-  ...OLLAMA_MODELS[1].config,
-  // If you want to override anything, do it here
-  // e.g. override the temperature or maxTokens
-  // temperatureRange: { min: 0, max: 1, default: 0.5, current: 0.5 },
-  // maxTokens: { min: 1, max: 48_000, default: 48_000, current: 48_000 },
+  ...OLLAMA_MODELS[0].config,
 };
 
