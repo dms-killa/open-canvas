@@ -9,30 +9,54 @@ export function getModelFromConfig(
   let modelName =
     config.configurable?.customModelName ||
     process.env.OLLAMA_MODEL ||
-    "ollama-llama3.1";
+    "ollama-llama3.3";
 
-  // Normalize model name for local-only usage
-  if (modelName.startsWith("ollama-")) {
+  const isOllama = modelName.startsWith("ollama-");
+  const isLiteLLM = modelName.startsWith("litellm-");
+
+  // Strip prefix for the actual model name sent to the API
+  if (isOllama) {
     modelName = modelName.replace("ollama-", "");
+  } else if (isLiteLLM) {
+    modelName = modelName.replace("litellm-", "");
   }
 
-  const model = new ChatOpenAI({
+  if (isOllama) {
+    const baseUrl = process.env.OLLAMA_API_URL
+      ? `${process.env.OLLAMA_API_URL}/v1`
+      : "http://localhost:11434/v1";
+
+    return new ChatOpenAI({
+      model: modelName,
+      temperature: config?.temperature ?? 0.7,
+      maxTokens: config?.maxTokens ?? 2048,
+      streaming: true,
+      configuration: {
+        baseURL: baseUrl,
+        apiKey: "ollama",
+      },
+    });
+  }
+
+  if (isLiteLLM) {
+    const baseUrl = process.env.LITELLM_BASE_URL || "http://litellm:8000/v1";
+
+    return new ChatOpenAI({
+      model: modelName,
+      temperature: config?.temperature ?? 0.7,
+      maxTokens: config?.maxTokens ?? 2048,
+      configuration: {
+        baseURL: baseUrl,
+        apiKey: "litellm",
+      },
+    });
+  }
+
+  return new ChatOpenAI({
     model: modelName,
     temperature: config?.temperature ?? 0.7,
     maxTokens: config?.maxTokens ?? 2048,
   });
-
-  // Disable tool choice for local models
-  if (modelName.includes("ollama") || modelName.includes("litellm")) {
-    (model as any).tool_choice = "none";
-  }
-
-  return model;
-}
-
-// Helper for tool calling reliability (if Ollama flakes)
-export function withToolPrompt(schema: any, prompt: string): string {
-  return `${prompt}\nOutput in strict JSON matching this schema: ${JSON.stringify(schema)}. Do not add extra text.`;
 }
 
 export function formatArtifactContent(
@@ -49,6 +73,6 @@ export function isUsingO1MiniModel(config: LangGraphRunnableConfig) {
   const modelName =
     config.configurable?.customModelName ||
     process.env.OLLAMA_MODEL ||
-    "ollama-llama3.1";
+    "ollama-llama3.3";
   return modelName.includes("o1-mini");
 }

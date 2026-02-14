@@ -26,16 +26,6 @@ async function handleRequest(req: NextRequest, method: string) {
     });
   }
 
-  let session: any | undefined;
-  let user: any | undefined;
-  try {
-    // Replace with alternative authentication mechanism if needed
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  } catch (e) {
-    console.error("Failed to fetch user", e);
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
     const path = req.nextUrl.pathname.replace(/^\/?api\//, "");
     const url = new URL(req.url);
