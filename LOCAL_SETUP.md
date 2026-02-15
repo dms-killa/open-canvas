@@ -6,7 +6,7 @@ This guide covers how to set up Open Canvas for a fully local, privacy-focused d
 
 - **Docker & Docker Compose** - For PostgreSQL and Ollama services
 - **Node.js 18+** - Runtime for the application
-- **Yarn** (v4.9.2) - Package manager
+- **Yarn** (v4.9.2) - Package manager (requires Corepack: run `corepack enable` first)
 - **Ollama** - Local LLM inference (can run via Docker or natively)
 
 ## Step-by-Step Setup

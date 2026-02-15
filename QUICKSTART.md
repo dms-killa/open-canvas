@@ -40,12 +40,11 @@ cd open-canvas
 2. Edit `/.env` and set at least the following variables:
 
    ```dotenv
-   # Supabase (used for auth in some flows – can be dummy if you don't use it)
-   NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000   # or your own supabase endpoint
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=dummykey
-
    # Backend / Agent container – point to the LAN Ollama server
-   OLLAMA_API_URL=http://<YOUR_LLAN_HOST>:11434   # <--- REQUIRED
+   OLLAMA_API_URL=http://<YOUR_LAN_HOST>:11434   # <--- REQUIRED
+
+   # Database (defaults are fine for Docker Compose)
+   DATABASE_URL="postgresql://opencanvas:opencanvas_local@localhost:5432/opencanvas"
 
    # (Optional) any other provider keys you want to use, e.g.:
    # OPENAI_API_KEY=sk-...

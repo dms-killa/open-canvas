@@ -45,10 +45,11 @@ open-canvas/
 - Multiple LLM providers (Anthropic, OpenAI, Fireworks, etc.)
 
 **Infrastructure:**
-- Supabase (Authentication)
-- Various LLM APIs (OpenAI, Anthropic, Google GenAI, Fireworks, Groq, etc.)
-- FireCrawl (Web scraping)
-- ExaSearch (Web search)
+- PostgreSQL + pgvector (local persistence, vector search)
+- Ollama (primary LLM provider, local inference)
+- Optional cloud LLM APIs (OpenAI, Anthropic, Google GenAI, Fireworks, Groq)
+- FireCrawl (Web scraping, optional)
+- ExaSearch (Web search, optional)
 
 ## Setup for Claude Code
 
@@ -65,20 +66,18 @@ open-canvas/
    cp apps/web/.env.example apps/web/.env
    ```
 
-3. **Required API Keys:**
-   - OpenAI API key
-   - Anthropic API key
-   - Supabase credentials (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)
-   - Optional: Google GenAI, Fireworks, Groq, FireCrawl, ExaSearch
+3. **Required API Keys:** None for local usage. Ollama is the primary provider.
+   - Optional: OpenAI, Anthropic, Google GenAI, Fireworks, Groq, FireCrawl, ExaSearch
 
 4. **LangGraph Server:**
-   - Install LangGraph CLI: `npm install -g @langchain/langgraph-cli`
+   - LangGraph CLI is installed as a workspace devDependency (`@langchain/langgraph-cli`)
+   - The CLI binary is `langgraphjs`, **not** `langgraph`
    - Run server: `yarn --cwd apps/agents dev` (runs on port 54367 by default)
 
-5. **Supabase Authentication:**
-   - Create a Supabase project
-   - Enable Email authentication (with email confirmation enabled)
-   - Optionally enable GitHub/Google OAuth providers
+5. **Ollama:**
+   - Install Ollama locally or run via Docker
+   - Pull a model: `ollama pull llama3.3`
+   - No authentication required
 
 ### Common Development Tasks
 
@@ -154,16 +153,16 @@ yarn lint:fix
 ### Environment Variables
 
 **Root `.env`** (LangGraph server):
-- LLM API keys
-- LangSmith credentials
-- Database connection strings
+- `OLLAMA_API_URL` (defaults to `http://localhost:11434`)
+- `DATABASE_URL` (PostgreSQL connection string)
+- Optional: LLM API keys, LangSmith credentials
 
 **`apps/web/.env`** (Frontend):
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `LANGGRAPH_API_URL` (defaults to `http://localhost:54367`)
-- `NEXT_PUBLIC_OLLAMA_ENABLED` (for local Ollama support)
+- `NEXT_PUBLIC_OLLAMA_ENABLED` (default: `true`)
 - `OLLAMA_API_URL`
+- `DATABASE_URL`
+- Optional: `NEXT_PUBLIC_*_ENABLED` flags for cloud providers
 
 ## Project Conventions
 
@@ -187,6 +186,41 @@ When adding new models:
 - Each app/package has its own `package.json` and build process
 - Use `yarn workspace <name> <command>` to run commands in specific workspaces
 
+## Yarn 4 / Docker Critical Requirements
+
+These constraints are documented in full in `docs/deployment/open-canvas-docker-deployment.md`.
+
+- **Corepack is mandatory:** Yarn 4 requires `corepack enable && corepack prepare yarn@4.9.2 --activate` before any `yarn` command in Docker.
+- **nodeLinker: node-modules:** `.yarnrc.yml` must contain `nodeLinker: node-modules`. Default Yarn 4 uses PnP which breaks most tools.
+- **Binary name:** `@langchain/langgraph-cli` installs as `langgraphjs`, **not** `langgraph`. Scripts must use `langgraphjs`.
+- **Workspace integrity:** All workspace `package.json` files must be COPY'd before `yarn install` in Docker. Missing any causes silent resolution failures.
+- **No global yarn:** Must use Corepack activation pattern, never `npm install -g yarn`.
+
+## Graph Topology Contract
+
+The topology contract is documented in `docs/graph/open-canvas-graph-topology.md`.
+
+**Contract Invariants (Must Hold):**
+1. **No unreachable nodes** - Every `addNode(...)` must be reachable from `START`.
+2. **Router destination completeness** - Every router return string must match a declared destination.
+3. **No silent pruning** - Nodes/edges cannot be removed to simplify local-only operation.
+4. **Local-only = gating, not deletion** - Disabled features use stubs or feature flags, not topology removal.
+
+**Before any PR that modifies the graph:**
+- Regenerate node/edge inventories from `addNode`/`addEdge`/`addConditionalEdges` calls
+- Verify `routeNode` return set matches declared destinations
+- Verify no `UnreachableNodeError` at compile time
+- Update the topology contract document with any changes
+
+## GraphRAG Spec
+
+The GraphRAG enhancement spec is documented in `docs/graph/open-canvas-graphrag-spec.md`.
+
+- **Modes:** OFF (default), OPTIONAL, REQUIRED
+- **State field:** `graphContext: GraphContext | null`
+- **Provenance required:** All graph facts must link to an Extraction node
+- **Graceful degradation:** OPTIONAL mode must never crash on Neo4j failure
+
 ## Common Issues & Solutions
 
 | Issue | Solution |
@@ -197,12 +231,17 @@ When adding new models:
 | "Model name is missing in config" error | Ensure `customModelName` is set in config.configurable |
 | Local Ollama model errors | Note: Open source LLMs may have lower instruction-following accuracy than GPT-4o/Claude |
 
+## Source-of-Truth Documents
+
+- **Topology Contract**: `docs/graph/open-canvas-graph-topology.md` - Node/edge inventory, no-silent-pruning rule
+- **GraphRAG Spec**: `docs/graph/open-canvas-graphrag-spec.md` - Neo4j enhancement with temporal semantics
+- **Deployment Guide**: `docs/deployment/open-canvas-docker-deployment.md` - Yarn 4 + Docker requirements
+
 ## Documentation & Resources
 
 - **LangGraph Docs**: https://langchain-ai.github.io/langgraphjs/
 - **LangChain Docs**: https://js.langchain.com/
 - **LangSmith**: https://smith.langchain.com/
-- **Supabase Auth Docs**: https://supabase.com/docs/guides/auth
 - **Next.js Docs**: https://nextjs.org/docs
 - **Project Repository**: https://github.com/langchain-ai/open-canvas
 

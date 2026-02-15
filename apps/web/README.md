@@ -25,22 +25,23 @@ This guide will cover how to setup and run Open Canvas locally. If you prefer a 
 
 ### Prerequisites
 
-Open Canvas requires the following API keys and external services:
+This fork uses a local-only stack. No cloud API keys or authentication are required for basic usage.
 
 #### Package Manager
 
-- [Yarn](https://yarnpkg.com/)
+- [Yarn](https://yarnpkg.com/) (v4.9.2, requires `corepack enable`)
 
-#### LLM APIs
+#### LLM Provider
 
-- [OpenAI API key](https://platform.openai.com/signup/)
-- [Anthropic API key](https://console.anthropic.com/)
+- [Ollama](https://ollama.com) (primary, local inference)
+- (optional) [OpenAI API key](https://platform.openai.com/signup/)
+- (optional) [Anthropic API key](https://console.anthropic.com/)
 - (optional) [Google GenAI API key](https://aistudio.google.com/apikey)
 - (optional) [Fireworks AI API key](https://fireworks.ai/login)
 
 #### Authentication
 
-- Alternative authentication methods
+- No authentication required (local user auto-provisioned)
 
 #### LangGraph Server
 
@@ -72,18 +73,6 @@ cp .env.example .env
 ```
 
 Then, setup alternative authentication methods.
-
-### Setup Authentication
-
-After creating a Supabase account, visit your [dashboard](https://supabase.com/dashboard/projects) and create a new project.
-
-Next, navigate to the `Project Settings` page inside your project, and then to the `API` tag. Copy the `Project URL`, and `anon public` project API key. Paste them into the `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` environment variables in the `.env` file.
-
-After this, navigate to the `Authentication` page, and the `Providers` tab. Make sure `Email` is enabled (also ensure you've enabled `Confirm Email`). You may also enable `GitHub`, and/or `Google` if you'd like to use those for authentication. (see these pages for documentation on how to setup each provider: [GitHub](https://supabase.com/docs/guides/auth/social-login/auth-github), [Google](https://supabase.com/docs/guides/auth/social-login/auth-google))
-
-#### Test authentication
-
-To verify authentication works, run `yarn dev` and visit [localhost:3000](http://localhost:3000). This should redirect you to the [login page](http://localhost:3000/auth/login). From here, you can either login with Google or GitHub, or if you did not configure these providers, navigate to the [signup page](http://localhost:3000/auth/signup) and create a new account with an email and password. This should then redirect you to a conformation page, and after confirming your email you should be redirected to the [home page](http://localhost:3000).
 
 ### Setup LangGraph Server
 

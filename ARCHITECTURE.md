@@ -122,3 +122,11 @@ All environment variables have sensible defaults for local development.
 | `LANGGRAPH_API_URL` | `http://localhost:54367` | LangGraph API URL |
 | `OPENAI_API_KEY` | - | Optional: Enable OpenAI models |
 | `ANTHROPIC_API_KEY` | - | Optional: Enable Anthropic models |
+
+## Docker Deployment
+
+For Docker-specific requirements (Corepack activation, `nodeLinker: node-modules`, `langgraphjs` binary name, workspace package.json COPY order), see `docs/deployment/open-canvas-docker-deployment.md`.
+
+## Graph Topology
+
+For the graph node/edge inventory and topology contract invariants, see `docs/graph/open-canvas-graph-topology.md`.
