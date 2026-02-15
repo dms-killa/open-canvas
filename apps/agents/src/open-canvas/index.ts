@@ -37,14 +37,21 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("routePostWebSearch", routePostWebSearch)
   .addEdge(START, "generatePath")
   .addEdge("generatePath", "replyToGeneralInput")
+  // routeNode uses Send(state.next, ...) where state.next is set by generatePath.
+  // All possible destinations must be declared here for topology completeness.
   .addConditionalEdges("generatePath", routeNode, [
     "generateArtifact",
+    "rewriteArtifact",
+    "rewriteArtifactTheme",
+    "rewriteCodeArtifactTheme",
+    "updateArtifact",
+    "updateHighlightedText",
+    "customAction",
     "webSearch",
-    "customAction"
+    "replyToGeneralInput",
   ])
   .addEdge("webSearch", "routePostWebSearch")
   .addEdge("replyToGeneralInput", "cleanState")
-   .addEdge("cleanState", "updateHighlightedText")
   .addEdge("generateArtifact", "reflect")
   .addConditionalEdges("cleanState", conditionallyGenerateTitle, [
     END,
@@ -54,11 +61,6 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addEdge("generateTitle", END)
   .addEdge("summarizer", END)
   .addEdge("generateFollowup", "updateArtifact");
-   .addEdge("cleanState", "rewriteArtifact")
-   .addEdge("cleanState", "rewriteArtifactTheme")
-   .addEdge("cleanState", "rewriteCodeArtifactTheme")
-   .addEdge("cleanState", "customAction")
-   .addEdge("cleanState", "webSearch");
 registerArtifactFlow(builder);
 
 export const graph = builder.compile().withConfig({ runName: "open_canvas" });
