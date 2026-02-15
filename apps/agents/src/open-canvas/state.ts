@@ -10,6 +10,7 @@ import {
   SearchResult,
   ContextDocument,
 } from "@opencanvas/shared/types";
+import type { GraphContext } from "@opencanvas/shared/graphdb";
 export { BaseMessage, BaseMessageLike };
 import {
   Annotation,
@@ -136,6 +137,25 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
    */
   webSearchResults: Annotation<SearchResult[] | undefined>,
   contextDocuments: Annotation<ContextDocument[]>,
+  /**
+   * GraphRAG context retrieved from Neo4j knowledge graph.
+   * null when GRAPHRAG_MODE is OFF or Neo4j is unavailable in OPTIONAL mode.
+   */
+  graphContext: Annotation<GraphContext | null>({
+    reducer: (_prev, next) => next ?? null,
+    default: () => null,
+  }),
+  /**
+   * Entities mentioned in the current interaction, accumulated via set-merging.
+   * Used by the write path to extract triples for the knowledge graph.
+   */
+  mentionedEntities: Annotation<string[]>({
+    reducer: (prev, next) => {
+      const merged = new Set([...(prev || []), ...(next || [])]);
+      return Array.from(merged);
+    },
+    default: () => [],
+  }),
 });
 
 export type OpenCanvasGraphReturnType = Partial<
