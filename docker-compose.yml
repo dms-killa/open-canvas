@@ -30,6 +30,8 @@ services:
       dockerfile: Dockerfile.agents
     ports:
       - "54367:8123"
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://opencanvas:opencanvas_local@postgres:5432/opencanvas
       - OLLAMA_API_URL=http://ollama:11434
