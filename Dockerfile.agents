@@ -1,43 +1,40 @@
-# 1. Use Node 20 Alpine for a lightweight footprint
 FROM node:20-alpine
 
-# 2. Install build essentials (needed for many LangChain/LLM dependencies)
+# Install build essentials (native deps for some LangChain packages)
 RUN apk add --no-cache git python3 make g++
 
-# 3. Enable Corepack to handle Yarn 4 correctly
+# Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.9.2 --activate
 
 WORKDIR /app
 
-# 4. Copy configuration files first for better layer caching
-# Wildcards prevent build failure if a file (like yarn.lock) isn't there yet
-COPY .yarnrc.yml* package.json yarn.lock* ./
+# Copy configuration files for layer caching
+COPY .yarnrc.yml package.json yarn.lock ./
 COPY .yarn ./.yarn
 
-# 5. Copy workspace metadata
+# Copy ALL workspace package.json files so Yarn can resolve the full workspace tree.
+# Missing any workspace causes Yarn to fail silently and skip dependency installation.
 COPY apps/agents/package.json ./apps/agents/
+COPY apps/web/package.json ./apps/web/
 COPY packages/shared/package.json ./packages/shared/
+COPY packages/evals/package.json ./packages/evals/
 
-# 6. Install dependencies
-# Using --immutable is standard for CI/Docker to ensure the lockfile doesn't change
+# Install dependencies
 RUN yarn install
 
-# 7. Copy the full source code
+# Copy the full source code
 COPY . .
 
-# 8. BUILD the shared package
-# This is the most common reason monorepos fail—the agent can't find @opencanvas/shared
+# langgraph.json references "env": ".env" — create an empty placeholder since
+# .dockerignore excludes .env (secrets are injected at runtime via docker-compose).
+RUN touch .env
+
+# Build the shared package (agents depends on @opencanvas/shared)
 RUN yarn workspace @opencanvas/shared build
 
-# 9. Expose the LangGraph default port
 EXPOSE 8123
 
-# 10. Start the Agent
-# We target the workspace and force the host to 0.0.0.0 so your LAN can see it.
-# If you don't set --host, it defaults to localhost inside the container and blocks external traffic.
-#CMD ["yarn", "workspace", "@opencanvas/agents", "langgraph", "dev", "--host", "0.0.0.0", "--port", "8123"]
-# --------------------------------------------------------------
-# 1️⃣  Set workdir to the agents workspace (where package.json lives)
-# --------------------------------------------------------------
+# Run from the agents workspace so `yarn langgraph` resolves the script correctly.
+# The script runs: langgraph dev --host 0.0.0.0 --port 8123 --config ../../langgraph.json
 WORKDIR /app/apps/agents
 CMD ["yarn", "langgraph"]
