@@ -44,6 +44,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   ])
   .addEdge("webSearch", "routePostWebSearch")
   .addEdge("replyToGeneralInput", "cleanState")
+   .addEdge("cleanState", "updateHighlightedText")
   .addEdge("generateArtifact", "reflect")
   .addConditionalEdges("cleanState", conditionallyGenerateTitle, [
     END,
