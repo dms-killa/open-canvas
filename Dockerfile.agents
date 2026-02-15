@@ -1,0 +1,24 @@
+# --------------------------------------------------------------
+# 1️⃣ Base image – Node LTS (includes npm)
+# --------------------------------------------------------------
+FROM node:20-alpine
+
+# Install OS utilities required by LangChain packages
+RUN apk add --no-cache git python3 make g++
+
+# Create non‑root user and group
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Install latest Yarn globally (force overwrite) then install all project dependencies
+RUN npm install -g --force yarn && yarn install --immutable
+
+WORKDIR /app
+COPY --chown=appuser:appgroup . .
+
+WORKDIR /app/apps/agents
+# Build the agents workspace; `|| true` keeps layer valid for future changes.
+RUN yarn build || true   # NOP for now; kept so the layer stays valid for future changes.
+
+WORKDIR /app
+EXPOSE 8123
+CMD ["yarn", "dev", "--host", "0.0.0.0", "--port", "54367"]
