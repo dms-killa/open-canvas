@@ -55,6 +55,11 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addEdge("summarizer", END)
   .addEdge("generateFollowup", "updateArtifact");
 
+   .addEdge("cleanState", "rewriteArtifact")
+   .addEdge("cleanState", "rewriteArtifactTheme")
+   .addEdge("cleanState", "rewriteCodeArtifactTheme")
+   .addEdge("cleanState", "customAction")
+   .addEdge("cleanState", "webSearch")
 registerArtifactFlow(builder);
 
 export const graph = builder.compile().withConfig({ runName: "open_canvas" });
