@@ -1,24 +1,43 @@
-# --------------------------------------------------------------
-# 1️⃣ Base image – Node LTS (includes npm)
-# --------------------------------------------------------------
+# 1. Use Node 20 Alpine for a lightweight footprint
 FROM node:20-alpine
 
-# Install OS utilities required by LangChain packages
+# 2. Install build essentials (needed for many LangChain/LLM dependencies)
 RUN apk add --no-cache git python3 make g++
 
-# Create non‑root user and group
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-# Install latest Yarn globally (force overwrite) then install all project dependencies
-RUN npm install -g --force yarn && yarn install --immutable
+# 3. Enable Corepack to handle Yarn 4 correctly
+RUN corepack enable && corepack prepare yarn@4.9.2 --activate
 
 WORKDIR /app
-COPY --chown=appuser:appgroup . .
 
-WORKDIR /app/apps/agents
-# Build the agents workspace; `|| true` keeps layer valid for future changes.
-RUN yarn build || true   # NOP for now; kept so the layer stays valid for future changes.
+# 4. Copy configuration files first for better layer caching
+# Wildcards prevent build failure if a file (like yarn.lock) isn't there yet
+COPY .yarnrc.yml* package.json yarn.lock* ./
+COPY .yarn ./.yarn
 
-WORKDIR /app
+# 5. Copy workspace metadata
+COPY apps/agents/package.json ./apps/agents/
+COPY packages/shared/package.json ./packages/shared/
+
+# 6. Install dependencies
+# Using --immutable is standard for CI/Docker to ensure the lockfile doesn't change
+RUN yarn install
+
+# 7. Copy the full source code
+COPY . .
+
+# 8. BUILD the shared package
+# This is the most common reason monorepos fail—the agent can't find @opencanvas/shared
+RUN yarn workspace @opencanvas/shared build
+
+# 9. Expose the LangGraph default port
 EXPOSE 8123
-CMD ["yarn", "dev", "--host", "0.0.0.0", "--port", "54367"]
+
+# 10. Start the Agent
+# We target the workspace and force the host to 0.0.0.0 so your LAN can see it.
+# If you don't set --host, it defaults to localhost inside the container and blocks external traffic.
+#CMD ["yarn", "workspace", "@opencanvas/agents", "langgraph", "dev", "--host", "0.0.0.0", "--port", "8123"]
+# --------------------------------------------------------------
+# 1️⃣  Set workdir to the agents workspace (where package.json lives)
+# --------------------------------------------------------------
+WORKDIR /app/apps/agents
+CMD ["yarn", "langgraph"]
