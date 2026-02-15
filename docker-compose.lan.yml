@@ -25,11 +25,31 @@ services:
       - "54367:8123"
     environment:
       - DATABASE_URL=postgresql://opencanvas:opencanvas_local@postgres:5432/opencanvas
-      # OLLAMA_API_URL will be supplied from the host's .env file.
-      # Set it to your LAN Ollama instance, e.g. http://ollama.mysubnet:11434
       - OLLAMA_API_URL=${OLLAMA_API_URL}
+      - OLLAMA_CHAT_MODEL=${OLLAMA_CHAT_MODEL:-llama3}
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME:-nomic-embed-text}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "3000:3000"
+    environment:
+      - LANGGRAPH_API_URL=http://langgraph:8123
+      - NEXT_PUBLIC_LANGGRAPH_API_URL=${NEXT_PUBLIC_LANGGRAPH_API_URL:-http://localhost:54367}
+      - NEXT_PUBLIC_OLLAMA_ENABLED=true
+      - OLLAMA_API_URL=${OLLAMA_API_URL}
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME:-nomic-embed-text}
+      - DATABASE_URL=postgresql://opencanvas:opencanvas_local@postgres:5432/opencanvas
+    depends_on:
+      postgres:
+        condition: service_healthy
+      langgraph:
+        condition: service_started
 
 volumes:
   postgres_data:
