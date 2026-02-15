@@ -8,6 +8,7 @@ export function getModelFromConfig(
 ) {
   let modelName =
     config.configurable?.customModelName ||
+    process.env.OLLAMA_CHAT_MODEL ||
     process.env.OLLAMA_MODEL ||
     "ollama-llama3.3";
 
@@ -72,6 +73,7 @@ export function formatArtifactContent(
 export function isUsingO1MiniModel(config: LangGraphRunnableConfig) {
   const modelName =
     config.configurable?.customModelName ||
+    process.env.OLLAMA_CHAT_MODEL ||
     process.env.OLLAMA_MODEL ||
     "ollama-llama3.3";
   return modelName.includes("o1-mini");

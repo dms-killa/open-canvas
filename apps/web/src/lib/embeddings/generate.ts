@@ -7,7 +7,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "nomic-embed-text",
+      model: process.env.EMBEDDING_MODEL_NAME || "nomic-embed-text",
       prompt: text,
     }),
   });

@@ -4,7 +4,7 @@ import { LangGraphRunnableConfig } from "@langchain/langgraph";
 export function getModel(
   config: LangGraphRunnableConfig & { temperature?: number; maxTokens?: number }
 ) {
-  const modelName = process.env.OLLAMA_MODEL || "llama3.1";
+  const modelName = process.env.OLLAMA_CHAT_MODEL || process.env.OLLAMA_MODEL || "llama3.1";
   return new ChatOpenAI({
     modelName,
     temperature: config?.temperature ?? 0.7,
