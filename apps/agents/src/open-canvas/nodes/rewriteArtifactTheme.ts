@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { getGraphContextForGeneration } from "../../lib/graphrag-context";
 import {
   extractThinkingAndResponseTokens,
   isThinkingModel,
@@ -116,6 +117,17 @@ export const rewriteArtifactTheme = async (
 
   formattedPrompt = formattedPrompt.replace("{reflections}", memoriesAsString);
 
+  // GraphRAG read path
+  const { graphContext, graphContextPrompt } =
+    await getGraphContextForGeneration(
+      state._messages,
+      currentArtifactContent.fullMarkdown,
+      config
+    );
+  if (graphContextPrompt) {
+    formattedPrompt = `${formattedPrompt}\n\n${graphContextPrompt}`;
+  }
+
   const newArtifactValues = await smallModel.invoke([
     { role: "user", content: formattedPrompt },
   ]);
@@ -150,5 +162,6 @@ export const rewriteArtifactTheme = async (
     artifact: newArtifact,
     messages: [...(thinkingMessage ? [thinkingMessage] : [])],
     _messages: [...(thinkingMessage ? [thinkingMessage] : [])],
+    graphContext,
   };
 };

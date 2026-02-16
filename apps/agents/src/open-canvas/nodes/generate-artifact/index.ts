@@ -1,6 +1,7 @@
 import { getFormattedReflections } from "../../../lib/reflections";
 import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../utils/contextDocs";
 import { getModelFromConfigLocal } from "../../../lib/model-config.local";
+import { getGraphContextForGeneration } from "../../../lib/graphrag-context";
 type ArtifactV3Local = any; // TODO: tighten later
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import {
@@ -40,10 +41,15 @@ export const generateArtifact = async (
     modelName
   );
 
+  // GraphRAG read path: fetch graph context for generation
+  const { graphContext, graphContextPrompt } =
+    await getGraphContextForGeneration(state._messages, undefined, config);
+
   const userSystemPrompt = ""; // or some default value
-  const fullSystemPrompt = userSystemPrompt
-    ? `${userSystemPrompt}\n${formattedNewArtifactPrompt}`
-    : formattedNewArtifactPrompt;
+  const systemParts = [formattedNewArtifactPrompt];
+  if (userSystemPrompt) systemParts.unshift(userSystemPrompt);
+  if (graphContextPrompt) systemParts.push(graphContextPrompt);
+  const fullSystemPrompt = systemParts.join("\n\n");
 
   const contextDocumentMessages = await createContextDocumentMessages(
     state._messages
@@ -68,5 +74,6 @@ export const generateArtifact = async (
 
   return {
     artifact: newArtifact,
+    graphContext,
   };
 };

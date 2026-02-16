@@ -10,6 +10,7 @@ import {
   SearchResult,
   ContextDocument,
 } from "@opencanvas/shared/types";
+import type { GraphContext } from "@opencanvas/shared/graphrag-types";
 export { BaseMessage, BaseMessageLike };
 import {
   Annotation,
@@ -136,6 +137,11 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
    */
   webSearchResults: Annotation<SearchResult[] | undefined>,
   contextDocuments: Annotation<ContextDocument[]>,
+  /**
+   * Graph-based context from Neo4j knowledge graph.
+   * Null when GraphRAG is OFF or Neo4j is unavailable in OPTIONAL mode.
+   */
+  graphContext: Annotation<GraphContext | null>,
 });
 
 export type OpenCanvasGraphReturnType = Partial<

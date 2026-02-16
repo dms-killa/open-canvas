@@ -1,4 +1,5 @@
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { getGraphContextForGeneration } from "../../lib/graphrag-context";
 import {
   getArtifactContent,
   isArtifactCodeContent,
@@ -89,6 +90,14 @@ export const updateArtifact = async (
     end
   ) as string;
 
+  // GraphRAG read path
+  const { graphContext, graphContextPrompt } =
+    await getGraphContextForGeneration(
+      state._messages,
+      currentArtifactContent.code,
+      config
+    );
+
   const formattedPrompt = UPDATE_HIGHLIGHTED_ARTIFACT_PROMPT.replace(
     "{highlightedText}",
     highlightedText
@@ -112,8 +121,11 @@ export const updateArtifact = async (
   );
 
   const isO1MiniModel = false; // Temporarily setting to false, adjust as needed
+  const systemContent = graphContextPrompt
+    ? `${formattedPrompt}\n\n${graphContextPrompt}`
+    : formattedPrompt;
   const updatedArtifactResponse = await smallModelWithTool.invoke([
-    { role: isO1MiniModel ? "user" : "system", content: formattedPrompt },
+    { role: isO1MiniModel ? "user" : "system", content: systemContent },
     ...(contextDocumentMessages as BaseMessageLike[]),
     recentHumanMessage,
   ]);
@@ -147,5 +159,6 @@ export const updateArtifact = async (
 
   return {
     artifact: newArtifact,
+    graphContext,
   };
 };

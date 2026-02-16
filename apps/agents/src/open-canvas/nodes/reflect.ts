@@ -1,6 +1,8 @@
 import { Client } from "@langchain/langgraph-sdk";
 import { OpenCanvasGraphAnnotation } from "../state.js";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
+import { getGraphRAGMode } from "@opencanvas/shared/graphdb";
+import { extractAndWriteToGraph } from "@opencanvas/shared/graphrag-write";
 
 export const reflectNode = async (
   state: typeof OpenCanvasGraphAnnotation.State,
@@ -51,6 +53,49 @@ export const reflectNode = async (
     );
   } catch (e) {
     console.error("Failed to start reflection");
+  }
+
+  // GraphRAG write path: extract entities, relations, and style rules
+  // and persist them to Neo4j with full provenance
+  const graphMode = getGraphRAGMode();
+  if (graphMode !== "OFF") {
+    try {
+      const assistantId =
+        config.configurable?.open_canvas_assistant_id ||
+        config.configurable?.assistant_id ||
+        "default";
+      const threadId = config.configurable?.thread_id || "unknown";
+
+      // Get artifact content if available
+      const currentArtifact = state.artifact;
+      const currentContent =
+        currentArtifact?.contents?.[currentArtifact.currentIndex ?? 0];
+      const artifactContent =
+        currentContent && "fullMarkdown" in currentContent
+          ? (currentContent.fullMarkdown as string)
+          : currentContent && "code" in currentContent
+            ? (currentContent.code as string)
+            : undefined;
+
+      await extractAndWriteToGraph({
+        userId: assistantId,
+        sessionId: threadId,
+        artifactId: currentContent?.title,
+        messages: state._messages.map((m) => ({
+          role: m.getType(),
+          content:
+            typeof m.content === "string"
+              ? m.content
+              : JSON.stringify(m.content),
+        })),
+        artifactContent,
+      });
+    } catch (err) {
+      if (graphMode === "REQUIRED") {
+        throw err;
+      }
+      console.warn("GraphRAG write failed in OPTIONAL mode:", err);
+    }
   }
 
   return {};
