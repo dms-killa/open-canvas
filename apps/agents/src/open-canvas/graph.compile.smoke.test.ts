@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 import { describe, it, expect } from "vitest";
-import { makeOpenCanvasGraphForSmoke } from "./index.smoke";
+import { makeOpenCanvasGraphForSmoke } from "./index.smoke.js";
 
 describe("open_canvas compile-only (smoke)", () => {
   it("compiles a trimmed graph without side effects", () => {

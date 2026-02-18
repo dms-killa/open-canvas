@@ -3,7 +3,7 @@ import { OpenCanvasGraphAnnotation } from "../../state.js";
 import { formatArtifactContent, getModelFromConfig } from "../../../utils.js";
 import { getArtifactContent } from "@opencanvas/shared/utils/artifacts";
 import { GET_TITLE_TYPE_REWRITE_ARTIFACT } from "../../prompts.js";
-import { getFormattedReflections } from "../../../reflection";
+import { getFormattedReflections } from "../../../reflection.js";
 
 export async function optionallyUpdateArtifactMeta(
   state: typeof OpenCanvasGraphAnnotation.State,

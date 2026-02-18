@@ -42,7 +42,7 @@ function checkDevServer(): Promise<void> {
 
         // Additional check: Verify health endpoint
         try {
-          const healthCheckUrl = "http://localhost:54367/api/healthz";
+          const healthCheckUrl = "http://localhost:8123/api/healthz";
           console.log(`Checking health endpoint: ${healthCheckUrl}`);
           const response = await fetch(healthCheckUrl);
           if (response.ok) {

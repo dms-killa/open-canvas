@@ -1,7 +1,7 @@
 import {
   createContextDocumentMessagesOpenAI,
   mapSearchResultToContextDocument,
-} from "./context-docs";
+} from "./context-docs.js";
 export {
   createContextDocumentMessagesOpenAI,
   mapSearchResultToContextDocument,

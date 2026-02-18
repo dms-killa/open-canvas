@@ -1,22 +1,22 @@
 import { StateGraph, START, END } from "@langchain/langgraph";
-import { OpenCanvasGraphAnnotation } from "./state";
-import { routeNode, cleanState, conditionallyGenerateTitle } from "./router";
-import { routePostWebSearch } from "./web-search-bridge";
-import { registerArtifactFlow } from "./artifact-flow";
-import { customAction } from "./nodes/customAction";
-import { generateArtifact } from "./nodes/generate-artifact";
-import { generateFollowup } from "./nodes/generateFollowup";
-import { generatePath } from "./nodes/generate-path";
-import { reflectNode } from "./nodes/reflect";
-import { updateArtifact } from "./nodes/updateArtifact";
-import { replyToGeneralInput } from "./nodes/replyToGeneralInput";
-import { generateTitleNode } from "./nodes/generateTitle";
-import { updateHighlightedText } from "./nodes/updateHighlightedText";
-import { summarizer } from "./nodes/summarizer";
-import { graph as webSearchGraph } from "../web-search";
-import { rewriteArtifact } from "./nodes/rewrite-artifact";
-import { rewriteArtifactTheme } from "./nodes/rewriteArtifactTheme";
-import { rewriteCodeArtifactTheme } from "./nodes/rewriteCodeArtifactTheme";
+import { OpenCanvasGraphAnnotation } from "./state.js";
+import { routeNode, cleanState, conditionallyGenerateTitle } from "./router.js";
+import { routePostWebSearch } from "./web-search-bridge.js";
+import { registerArtifactFlow } from "./artifact-flow.js";
+import { customAction } from "./nodes/customAction.js";
+import { generateArtifact } from "./nodes/generate-artifact/index.js";
+import { generateFollowup } from "./nodes/generateFollowup.js";
+import { generatePath } from "./nodes/generate-path/index.js";
+import { reflectNode } from "./nodes/reflect.js";
+import { updateArtifact } from "./nodes/updateArtifact.js";
+import { replyToGeneralInput } from "./nodes/replyToGeneralInput.js";
+import { generateTitleNode } from "./nodes/generateTitle.js";
+import { updateHighlightedText } from "./nodes/updateHighlightedText.js";
+import { summarizer } from "./nodes/summarizer.js";
+import { graph as webSearchGraph } from "../web-search/index.js";
+import { rewriteArtifact } from "./nodes/rewrite-artifact/index.js";
+import { rewriteArtifactTheme } from "./nodes/rewriteArtifactTheme.js";
+import { rewriteCodeArtifactTheme } from "./nodes/rewriteCodeArtifactTheme.js";
 
 const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("customAction", customAction)
@@ -50,7 +50,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   ])
   .addEdge("webSearch", "routePostWebSearch")
   .addEdge("replyToGeneralInput", "cleanState")
-   .addEdge("cleanState", "updateHighlightedText")
+  .addEdge("cleanState", "updateHighlightedText")
   .addEdge("generateArtifact", "reflect")
   .addEdge("reflect", END)
   .addConditionalEdges("cleanState", conditionallyGenerateTitle, [

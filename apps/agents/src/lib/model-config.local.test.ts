@@ -1,4 +1,4 @@
-import { getModelFromConfigLocal } from "./model-config.local";
+import { getModelFromConfigLocal } from "./model-config.local.js";
 import { describe, it, expect } from "@jest/globals";
 
 describe("getModelFromConfigLocal", () => {

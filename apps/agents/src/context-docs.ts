@@ -1,6 +1,6 @@
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { convertPDFToText } from "./lib/pdf";
-import { decodeBase64ToUtf8 } from "./lib/base64";
+import { convertPDFToText } from "./lib/pdf.js";
+import { decodeBase64ToUtf8 } from "./lib/base64.js";
 type LocalContextDoc = { name?: string; type: string; data: string };
 type LocalSearchResult = {
   metadata?: {

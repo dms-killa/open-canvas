@@ -1,3 +1,3 @@
-export * from './types';
-export * from './utils/artifacts';
-export * from './graphrag-types';
+export * from './types.js';
+export * from './utils/artifacts.js';
+export * from './graphrag-types.js';

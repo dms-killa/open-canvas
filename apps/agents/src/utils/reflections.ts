@@ -4,4 +4,4 @@ export {
   ensureStoreInConfig,
   formatReflections,
   getFormattedReflections,
-} from "../lib/reflections";
+} from "../lib/reflections.js";

@@ -13,6 +13,7 @@
   "private": true,
   "scripts": {
     "langgraph": "langgraphjs dev --host 0.0.0.0 --port 8123 --config ../../langgraph.json",
+    "dev": "yarn langgraph",
     "start": "yarn langgraph"
   },
   "dependencies": {

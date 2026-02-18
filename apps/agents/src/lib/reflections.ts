@@ -3,7 +3,7 @@
 // re-export from here to prevent circular dependencies.
 import { Reflections } from "@opencanvas/shared/types";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { Store } from "../types/store";
+import { Store } from "../types/store.js";
 
 export function ensureStoreInConfig(config: any): Store {
   return config.store as Store;

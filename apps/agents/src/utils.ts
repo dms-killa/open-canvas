@@ -1,7 +1,7 @@
-export * from "./lib/reflections";
-export * from "./context-docs";
-export * from "./messages";
-export * from "./web-results";
-export * from "./utils/base64";
-export * from "./utils/pdf";
+export * from "./lib/reflections.js";
+export * from "./context-docs.js";
+export * from "./messages.js";
+export * from "./web-results.js";
+export * from "./utils/base64.js";
+export * from "./utils/pdf.js";
 // Add other utility modules as needed

@@ -4,5 +4,5 @@ export {
   ensureStoreInConfig,
   formatReflections,
   getFormattedReflections,
-} from "../lib/reflections";
-export * from "../reflection/prompts";
+} from "../lib/reflections.js";
+export * from "../reflection/prompts.js";

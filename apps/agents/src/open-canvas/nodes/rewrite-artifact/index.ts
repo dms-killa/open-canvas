@@ -9,10 +9,10 @@ import {
   isArtifactCodeContent,
 } from "@opencanvas/shared/utils/artifacts";
 import { ArtifactV3 } from "@opencanvas/shared/types";
-import { getModelFromConfigLocal as getModelFromConfig } from "../../../lib/model-config.local";
-import { getFormattedReflections } from "../../../lib/reflections";
-import { getGraphContextForGeneration } from "../../../lib/graphrag-context";
-import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../lib/context-docs";
+import { getModelFromConfigLocal as getModelFromConfig } from "../../../lib/model-config.local.js";
+import { getFormattedReflections } from "../../../lib/reflections.js";
+import { getGraphContextForGeneration } from "../../../lib/graphrag-context.js";
+import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../lib/context-docs.js";
 import { optionallyUpdateArtifactMeta } from "./update-meta.js";
 import { buildPrompt, createNewArtifactContent } from "./utils.js";
 import { z } from "zod";
