@@ -12,7 +12,7 @@ import { Reflections } from "@opencanvas/shared/types";
 import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts.js";
 import { z } from "zod";
 import { ensureStoreInConfig } from "../lib/reflections";
-import { formatReflections } from "./reflection";
+import { formatReflections } from "../reflection";
 import {
   getArtifactContent,
   isArtifactMarkdownContent,
