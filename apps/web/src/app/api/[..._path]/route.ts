@@ -17,7 +17,7 @@ async function handleRequest(req: NextRequest, method: string) {
     return NextResponse.json({
       ok: true,
       upstream: 'langgraph',
-      port: 54367
+      port: 8123
     }, {
       status: 200,
       headers: {
