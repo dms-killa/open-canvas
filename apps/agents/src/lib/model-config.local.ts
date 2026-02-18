@@ -1,5 +1,5 @@
 // model-config.local.ts
-import { Model } from "../types/model";
+import { Model } from "../types/model.js";
 
 export function getModelFromConfigLocal(): Model {
   return {

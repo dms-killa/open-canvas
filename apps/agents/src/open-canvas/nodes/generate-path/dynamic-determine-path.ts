@@ -6,8 +6,8 @@ import {
   NO_ARTIFACT_PROMPT,
 } from "../../prompts.js";
 import { OpenCanvasGraphAnnotation } from "../../state.js";
-import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../lib/context-docs";
-import { getModelFromConfigLocal } from "../../../lib/model-config.local";
+import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../lib/context-docs.js";
+import { getModelFromConfigLocal } from "../../../lib/model-config.local.js";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { getArtifactContent } from "@opencanvas/shared/utils/artifacts";
 import z from "zod";

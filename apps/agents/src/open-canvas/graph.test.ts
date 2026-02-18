@@ -1,6 +1,6 @@
 // Enhanced tests for LangGraph
 import { describe, it, expect } from '@jest/globals';
-import { graph } from "./index";
+import { graph } from "./index.js";
 
 describe("OpenCanvas Graph", () => {
   it("should be defined", () => {

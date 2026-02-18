@@ -1,7 +1,7 @@
-import { getFormattedReflections } from "../../../lib/reflections";
-import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../utils/contextDocs";
-import { getModelFromConfigLocal } from "../../../lib/model-config.local";
-import { getGraphContextForGeneration } from "../../../lib/graphrag-context";
+import { getFormattedReflections } from "../../../lib/reflections.js";
+import { createContextDocumentMessagesOpenAI as createContextDocumentMessages } from "../../../utils/contextDocs.js";
+import { getModelFromConfigLocal } from "../../../lib/model-config.local.js";
+import { getGraphContextForGeneration } from "../../../lib/graphrag-context.js";
 type ArtifactV3Local = any; // TODO: tighten later
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import {

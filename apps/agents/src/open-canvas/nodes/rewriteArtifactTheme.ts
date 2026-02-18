@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getGraphContextForGeneration } from "../../lib/graphrag-context";
+import { getGraphContextForGeneration } from "../../lib/graphrag-context.js";
 import {
   extractThinkingAndResponseTokens,
   isThinkingModel,
@@ -11,7 +11,7 @@ import {
 } from "@opencanvas/shared/utils/artifacts";
 import { ArtifactV3, Reflections } from "@opencanvas/shared/types";
 import { formatReflections } from "../../utils.js";
-import { getModelFromConfigLocal as getModelFromConfig } from "../../lib/model-config.local";
+import { getModelFromConfigLocal as getModelFromConfig } from "../../lib/model-config.local.js";
 import { ensureStoreInConfig } from "../../utils.js";
 import {
   ADD_EMOJIS_TO_ARTIFACT_PROMPT,

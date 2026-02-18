@@ -1,5 +1,5 @@
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getGraphContextForGeneration } from "../../lib/graphrag-context";
+import { getGraphContextForGeneration } from "../../lib/graphrag-context.js";
 import {
   getArtifactContent,
   isArtifactCodeContent,
@@ -13,14 +13,14 @@ import {
 import {
   createContextDocumentMessagesOpenAI,
   mapSearchResultToContextDocument,
-} from "../../utils/contextDocs";
+} from "../../utils/contextDocs.js";
 import {
   formatReflections,
   ensureStoreInConfig,
-} from "../../utils/reflections";
-import { getModelFromConfigLocal as getModelFromConfig } from "../../lib/model-config.local";
+} from "../../utils/reflections.js";
+import { getModelFromConfigLocal as getModelFromConfig } from "../../lib/model-config.local.js";
 import { UPDATE_HIGHLIGHTED_ARTIFACT_PROMPT } from "../prompts.js";
-import { UPDATE_ARTIFACT_TOOL_SCHEMA } from "./updateArtifact/schemas";
+import { UPDATE_ARTIFACT_TOOL_SCHEMA } from "./updateArtifact/schemas.js";
 import { z } from "zod";
 import {
   OpenCanvasGraphAnnotation,

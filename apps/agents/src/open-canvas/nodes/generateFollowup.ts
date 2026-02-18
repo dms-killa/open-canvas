@@ -1,16 +1,16 @@
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { getModelFromConfigLocal } from "../../lib/model-config.local";
+import { getModelFromConfigLocal } from "../../lib/model-config.local.js";
 import {
   getArtifactContent,
   isArtifactMarkdownContent,
 } from "@opencanvas/shared/utils/artifacts";
 import { Reflections } from "@opencanvas/shared/types";
-import { ensureStoreInConfig } from "../../lib/reflections";
-import { formatReflections } from "../../reflection";
+import { ensureStoreInConfig } from "../../lib/reflections.js";
+import { formatReflections } from "../../reflection.js";
 import { BaseMessage } from "@langchain/core/messages";
-import { FOLLOWUP_ARTIFACT_PROMPT } from "../prompts";
-import { GENERATE_FOLLOWUP_TOOL_SCHEMA } from "./generateFollowup/schemas";
-import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state";
+import { FOLLOWUP_ARTIFACT_PROMPT } from "../prompts.js";
+import { GENERATE_FOLLOWUP_TOOL_SCHEMA } from "./generateFollowup/schemas.js";
+import { OpenCanvasGraphAnnotation, OpenCanvasGraphReturnType } from "../state.js";
 
 export const generateFollowup = async (
   state: typeof OpenCanvasGraphAnnotation.State,

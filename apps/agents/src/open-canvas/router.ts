@@ -1,6 +1,6 @@
 import { END, Send } from "@langchain/langgraph";
 import { DEFAULT_INPUTS } from "@opencanvas/shared/constants";
-import { OpenCanvasGraphAnnotation } from "./state";
+import { OpenCanvasGraphAnnotation } from "./state.js";
 
 const CHARACTER_MAX = 300000; // ~75k tokens x 4 chars
 const FILE_COUNT_MAX = 3;

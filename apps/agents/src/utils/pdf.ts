@@ -1,5 +1,5 @@
 import pdfParse from "pdf-parse";
-import { cleanBase64 } from "./base64";
+import { cleanBase64 } from "./base64.js";
 
 export async function convertPDFToText(base64PDF: string) {
   const cleaned = cleanBase64(base64PDF);

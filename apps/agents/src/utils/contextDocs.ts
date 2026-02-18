@@ -1,6 +1,6 @@
 import { MessageContentComplex } from "@langchain/core/messages";
-import { convertPDFToText } from "./pdf";
-import { cleanBase64, decodeBase64ToUtf8 } from "../lib/base64";
+import { convertPDFToText } from "./pdf.js";
+import { cleanBase64, decodeBase64ToUtf8 } from "../lib/base64.js";
 import { ContextDocument, SearchResult } from "@opencanvas/shared/types";
 
 import { AIMessage } from "@langchain/core/messages";

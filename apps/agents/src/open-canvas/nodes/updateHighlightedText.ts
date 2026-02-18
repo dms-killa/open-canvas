@@ -1,6 +1,6 @@
-import { createContextDocumentMessagesOpenAI } from "../../lib/context-docs";
-import { getModelFromConfig } from "../../model-config";
-import { isUsingO1MiniModel } from "../../utils";
+import { createContextDocumentMessagesOpenAI } from "../../lib/context-docs.js";
+import { getModelFromConfig } from "../../model-config.js";
+import { isUsingO1MiniModel } from "../../utils.js";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import {
   getArtifactContent,

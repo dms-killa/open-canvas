@@ -12,8 +12,8 @@ type LocalSearchResult = {
 
 import { BaseMessage } from "@langchain/core/messages";
 
-import { convertPDFToText } from "./pdf";
-import { decodeBase64ToUtf8 } from "./base64";
+import { convertPDFToText } from "./pdf.js";
+import { decodeBase64ToUtf8 } from "./base64.js";
 
 export async function createContextDocumentMessagesOpenAI(
   messages: BaseMessage[]

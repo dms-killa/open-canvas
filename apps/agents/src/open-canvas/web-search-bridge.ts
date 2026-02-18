@@ -1,5 +1,5 @@
-import { createAIMessageFromWebResults } from "../lib/web-results";
-import { OpenCanvasGraphAnnotation } from "./state";
+import { createAIMessageFromWebResults } from "../lib/web-results.js";
+import { OpenCanvasGraphAnnotation } from "./state.js";
 import { Send, Command } from "@langchain/langgraph";
 
 function routePostWebSearch(
