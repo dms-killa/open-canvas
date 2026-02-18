@@ -11,13 +11,12 @@ import {
 import { Reflections } from "@opencanvas/shared/types";
 import { REFLECT_SYSTEM_PROMPT, REFLECT_USER_PROMPT } from "./prompts.js";
 import { z } from "zod";
-import { ensureStoreInConfig } from "../lib/reflections";
-import { formatReflections } from "../reflection";
+import { ensureStoreInConfig, formatReflections } from "../lib/reflections.js";
 import {
   getArtifactContent,
   isArtifactMarkdownContent,
 } from "@opencanvas/shared/utils/artifacts";
-import { getModelFromConfigLocal as getModelFromConfig } from "../lib/model-config.local";
+import { getModelFromConfigLocal as getModelFromConfig } from "../lib/model-config.local.js";
 
 export const generateReflectionTool = {
   name: "generate_reflections",

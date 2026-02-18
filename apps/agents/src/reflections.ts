@@ -1,12 +1,6 @@
-// Implementation based on reflection/index.ts
-export function ensureStoreInConfig(config: any) {
-  // implementation
-}
-
-export function formatReflections(reflections: any) {
-  // implementation
-}
-
-export function getFormattedReflections(reflections: any) {
-  // implementation
-}
+// Re-export barrel. Canonical implementations live in ./lib/reflections.ts.
+export {
+  ensureStoreInConfig,
+  formatReflections,
+  getFormattedReflections,
+} from "./lib/reflections";

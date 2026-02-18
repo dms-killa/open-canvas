@@ -39,13 +39,20 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addEdge("generatePath", "replyToGeneralInput")
   .addConditionalEdges("generatePath", routeNode, [
     "generateArtifact",
+    "rewriteArtifact",
+    "replyToGeneralInput",
+    "updateArtifact",
+    "updateHighlightedText",
+    "rewriteArtifactTheme",
+    "rewriteCodeArtifactTheme",
+    "customAction",
     "webSearch",
-    "customAction"
   ])
   .addEdge("webSearch", "routePostWebSearch")
   .addEdge("replyToGeneralInput", "cleanState")
    .addEdge("cleanState", "updateHighlightedText")
   .addEdge("generateArtifact", "reflect")
+  .addEdge("reflect", END)
   .addConditionalEdges("cleanState", conditionallyGenerateTitle, [
     END,
     "generateTitle",

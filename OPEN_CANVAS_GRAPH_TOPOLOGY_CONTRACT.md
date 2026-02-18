@@ -185,6 +185,7 @@ This section lists edges found by `grep -r "addEdge" apps/agents/src`.
 - `webSearch -> routePostWebSearch`
 
 - `generateArtifact -> reflect`
+- `reflect -> END`
 - `generateFollowup -> updateArtifact`
 
 - `generateTitle -> END`
@@ -230,7 +231,7 @@ Grounded in:
 
 | From | Router function | Destinations | Notes |
 |---|---|---|---|
-| `generatePath` | `routeNode` | `"generateArtifact"`, `"webSearch"`, `"customAction"` | Only 3 entry destinations declared here. Many other nodes are reached via static edges starting from `replyToGeneralInput -> cleanState` and via artifact-flow edges. This is not automatically incorrect, but it makes correctness dependent on static reachability and on `routeNode` never returning undeclared destinations. |
+| `generatePath` | `routeNode` | `"generateArtifact"`, `"rewriteArtifact"`, `"replyToGeneralInput"`, `"updateArtifact"`, `"updateHighlightedText"`, `"rewriteArtifactTheme"`, `"rewriteCodeArtifactTheme"`, `"customAction"`, `"webSearch"` | All 9 possible destinations of `routeNode` (via `Send(state.next, ...)`) are declared. The `generatePath` node sets `state.next` to one of these 9 values based on input state flags and dynamic LLM routing. |
 | `cleanState` | `conditionallyGenerateTitle` | `END`, `"generateTitle"`, `"summarizer"` | Terminal routing after cleanup: either end, generate title, or summarize. |
 
 Web-search conditional edges are not extracted here. Do not document web-search conditional destinations until they are extracted from `apps/agents/src/web-search/index.ts`.
@@ -239,30 +240,20 @@ Web-search conditional edges are not extracted here. Do not document web-search 
 
 This audit section identifies risks that follow from the grounded inventories above, and it defines verification steps. It does not claim failures without confirming code behavior.
 
-### Risk A: Potential sink nodes in the main graph
+### Risk A: Potential sink nodes in the main graph (RESOLVED)
 
-Based on the extracted static edges and conditional edges, the following nodes have confirmed inbound edges but no outbound edges appear in the extracted edge inventory:
+| Node | Status | Resolution |
+|---|---|---|
+| `reflect` | RESOLVED | Added explicit `addEdge("reflect", END)`. `reflectNode` is a fire-and-forget side effect that schedules a background reflection run and returns `{}`. The branch terminates cleanly at `END`. |
+| `routePostWebSearch` | VERIFIED | `routePostWebSearch` uses `Send`/`Command` to programmatically route to either `rewriteArtifact` or `generateArtifact` based on whether artifacts exist. This is valid LangGraph routing. |
 
-| Node | Confirmed incoming edge(s) | Outgoing edges found in extracted output | Likely explanation | Verification step |
-|---|---|---|---|---|
-| `reflect` | `generateArtifact -> reflect` | none found | `reflectNode` may invoke the reflection subgraph programmatically and then return control without a declarative edge. | Inspect the body of `reflectNode` in `apps/agents/src/open-canvas/...` and confirm it transitions to a next step (for example `cleanState`) either by returning a graph control command or by writing state that another edge consumes. |
-| `routePostWebSearch` | `webSearch -> routePostWebSearch` | none found | `routePostWebSearch` may route programmatically, or edges may be defined in a file not captured by the current extraction. | Inspect the body of `routePostWebSearch` and confirm it transitions to the correct next step for each case (for example returning to artifact update or generation flow). |
+### Risk B: Router narrowness and undeclared destinations (RESOLVED)
 
-If inspection confirms these nodes do not transition, that is a bug that must be fixed by adding an explicit transition mechanism (edge or programmatic routing) consistent with LangGraph semantics used in this repo.
+`routeNode` uses `Send(state.next, ...)` where `state.next` is set by `generatePath` to one of 9 possible values. All 9 destinations are now declared in `addConditionalEdges`:
 
-### Risk B: Router narrowness and undeclared destinations
+`"generateArtifact"`, `"rewriteArtifact"`, `"replyToGeneralInput"`, `"updateArtifact"`, `"updateHighlightedText"`, `"rewriteArtifactTheme"`, `"rewriteCodeArtifactTheme"`, `"customAction"`, `"webSearch"`
 
-`generatePath` declares only three destinations. This is safe only if `routeNode` never returns any other node name.
-
-Verification step:
-- Inspect `routeNode` and enumerate all possible return values.
-- If any return value is not one of:
-  - `generateArtifact`, `webSearch`, `customAction`
-  then either:
-  - update the declared destinations to include the full return set, or
-  - change `routeNode` so it never returns undeclared values.
-
-This rule exists because returning an undeclared destination is structurally invalid.
+The 9 values correspond to the routing logic in `generatePath` (`apps/agents/src/open-canvas/nodes/generate-path/index.ts`).
 
 ## Parity and Drift Control
 
