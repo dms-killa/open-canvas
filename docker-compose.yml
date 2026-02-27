@@ -34,6 +34,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://opencanvas:opencanvas_local@postgres:5432/opencanvas
       - OLLAMA_API_URL=http://ollama:11434
+    image: open-canvas-langgraph
     depends_on:
       postgres:
         condition: service_healthy
