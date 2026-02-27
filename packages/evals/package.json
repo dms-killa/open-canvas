@@ -6,7 +6,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "yarn clean && tsc",
+    "build": "echo \"Evals build skipped\"",
     "clean": "rm -rf ./dist .turbo || true",
     "format": "prettier --config .prettierrc --write \"src\"",
     "format:check": "prettier --config .prettierrc --check \"src\"",

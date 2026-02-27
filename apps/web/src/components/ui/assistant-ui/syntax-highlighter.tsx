@@ -1,5 +1,5 @@
 import { PrismAsyncLight } from "react-syntax-highlighter";
-import { makePrismAsyncLightSyntaxHighlighter } from "@assistant-ui/react-syntax-highlighter";
+import { makePrismAsyncLightSyntaxHighlighter } from "react-syntax-highlighter";
 
 import tsx from "react-syntax-highlighter/dist/esm/languages/prism/tsx";
 import python from "react-syntax-highlighter/dist/esm/languages/prism/python";
