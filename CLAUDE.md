@@ -270,3 +270,38 @@ Each "mod" is a discrete session. Logs record what was learned and what pattern 
 - **Pattern established:** `gameSystem` field → `systemTabs` tab config lookup →
   `SYSTEM_ATTRIBUTE_SECTIONS` section suppression.
   This is now the template for all future game system UI work.
+
+### VH-003: The Expanse RPG (AGE System) — Full Implementation
+- **Date:** 2026-02-28
+- **Goal:** Production-ready playtest sheet for The Expanse RPG with friend testing in mind
+- **System:** Adventure Game Engine (AGE), Green Ronin Publishing
+- **Result:** Complete library script, sample pre-generated character (Jadamantha Holland),
+  full UI wire-up following VH-002 pattern, and a playtest guide for human use.
+- **Key technical findings:**
+  - `attributeType: 'stat'` handles all 9 AGE Abilities cleanly — the score IS the modifier,
+    so no separate modifier formula is needed. Pattern confirmed from CoC.
+  - Fortune as `healthBar` supports dual HP/resource use well: current/max tracking maps
+    naturally to "absorb damage 1:1" and the max shows the computed cap.
+  - `10 + (level * 2 * constitution)` Fortune formula works correctly; Level defined first
+    in the library so it's in scope for the Fortune calculation.
+  - Conditions via `toggle` + child `effect` nodes: Injured (−1 all) and Wounded (−2 all,
+    Speed ×0.5) and Hindered (Speed ×0.5) and Restrained (Speed ×0) are fully expressible
+    with the existing effect operation set (`add`, `mul`). Dying and Unconscious are
+    descriptive toggles only (no automated per-round effect needed for the simple case).
+  - All 9 Ability Roll actions use `3d6 + [ability]` — clean and uniform.
+  - The VH-002 `SYSTEM_ATTRIBUTE_SECTIONS` allowlist for 'expanse' is identical to 'coc7e':
+    `['healthBar', 'stat', 'skill', 'resource', 'utility']`. AGE and CoC both share the
+    same "no D&D sections" profile. Pattern confirmed: one constant entry per system, no
+    additional code required.
+  - Focus automation is deferred: players add +2 manually when rolling with a relevant
+    Focus. Full automation would require a per-roll ability → active-focus lookup,
+    which is a VH-004 scope item.
+- **Pattern confirmed:** `attributeType: 'stat'` + `healthBar` + `toggle` conditions
+  fully supports a modern AGE-family system without any new property types or code changes.
+  Three systems tested (D&D 5e, CoC 7e, The Expanse) — existing type set is sufficient.
+- **Known limitations documented in:** `docs/expanse-playtest-guide.md`
+- **Artifacts:**
+  - `scripts/insert-expanse-library.js` — full ruleset library (9 abilities, derived stats,
+    Fortune healthBar, Level, Income, 6 sample Focuses, 9 roll actions, 5 conditions)
+  - `scripts/create-expanse-sample-character.js` — Jadamantha Holland, Belter Negotiator L1
+  - `docs/expanse-playtest-guide.md` — one-page GM/player reference for playtest sessions
