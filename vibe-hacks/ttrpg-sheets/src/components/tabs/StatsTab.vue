@@ -189,15 +189,7 @@
 const SYSTEM_ATTRIBUTE_SECTIONS = {
   coc7e: ['healthBar', 'stat', 'skill', 'resource', 'utility'],
   // omits: 'ability', 'hitDice', 'spellSlot', 'modifier', 'savingThrow'
-
-  // The Expanse RPG (AGE System) — VH-003
-  // Same section set as CoC: stat is the universal "just a number" type.
-  // Fortune is a healthBar. Focuses are skills. Conditions render as part of
-  // the stat or utility sections. No ability scores, hit dice, spell slots,
-  // modifiers, or saving throws in this system.
-  expanse: ['healthBar', 'stat', 'skill', 'resource', 'utility'],
-  // omits: 'ability', 'hitDice', 'spellSlot', 'modifier', 'savingThrow'
-
+  //
   // D&D 5e (undefined) → null → all sections shown (filtered only by empty check)
 }
 

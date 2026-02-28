@@ -35,7 +35,6 @@
  * Supported game systems:
  *   undefined / 'dnd5e' — full D&D 5e tab set (default)
  *   'coc7e'             — Call of Cthulhu 7e investigator sheet
- *   'expanse'           — The Expanse RPG (AGE System)
  *
  * To add a new system: add an entry to systemTabs below. No other changes needed.
  */
@@ -92,17 +91,6 @@ export default {
           { id: 'journal',   label: 'Journal',        icon: 'mdi-book-open-variant', component: 'JournalTab',   show: true },
           { id: 'build',     label: 'Build',          icon: 'mdi-wrench',            component: 'BuildTab',     show: true },
           { id: 'tree',      label: 'Tree',           icon: 'mdi-file-tree',         component: 'TreeTab',      show: !!this.creature?.settings?.showTreeTab },
-        ],
-        // The Expanse RPG (AGE System) — VH-003
-        // No Spells tab. "Features" renamed "Talents" for thematic clarity.
-        expanse: [
-          { id: 'stats',     label: 'Character',  icon: 'mdi-account-circle',    component: 'StatsTab',     show: true },
-          { id: 'actions',   label: 'Actions',    icon: 'mdi-lightning-bolt',    component: 'ActionsTab',   show: true },
-          { id: 'inventory', label: 'Gear',       icon: 'mdi-briefcase-outline', component: 'InventoryTab', show: true },
-          { id: 'features',  label: 'Talents',    icon: 'mdi-star-circle',       component: 'FeaturesTab',  show: true },
-          { id: 'journal',   label: 'Backstory',  icon: 'mdi-book-open-variant', component: 'JournalTab',   show: true },
-          { id: 'build',     label: 'Build',      icon: 'mdi-wrench',            component: 'BuildTab',     show: true },
-          { id: 'tree',      label: 'Tree',       icon: 'mdi-file-tree',         component: 'TreeTab',      show: !!this.creature?.settings?.showTreeTab },
         ],
       }
 
