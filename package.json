@@ -82,10 +82,10 @@
     "prosemirror-commands": "1.7.1",
     "prosemirror-history": "1.4.1",
     "prosemirror-keymap": "1.2.3",
-    "@tiptap/core": "2.11.5",
-    "@tiptap/react": "2.11.5",
-    "@tiptap/pm": "2.11.5",
-    "@tiptap/extension-bold": "2.11.5"
+    "@tiptap/core": "2.6.6",
+    "@tiptap/react": "2.6.6",
+    "@tiptap/pm": "2.6.6",
+    "@tiptap/extension-bold": "2.6.6"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.10.43",
